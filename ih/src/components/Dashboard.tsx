@@ -29,9 +29,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         const key: string | undefined = process.env.REACT_APP_RIOT_API_KEY
         axios
-            .get<SummonerDTO>('https://' + NA_1 + BASE_URL + `/lol/summoner/v4/summoners/by-name/${name}?api_key=RGAPI-bb860ace-b098-424b-ade1-af1a332e29d1`, {
-                params: { "api_key": key ?? '' }
-            })
+            .get<SummonerDTO>('https://' + NA_1 + BASE_URL + `/lol/summoner/v4/summoners/by-name/${name}?api_key=${key}`)
             .then((res) => {
                 console.log("Post summoner details:", res);
                 this.setState(prevState => ({

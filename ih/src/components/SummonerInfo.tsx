@@ -14,7 +14,7 @@ class SummonerInfo extends React.Component<SummonerInfoProps, {}> {
 
     render() {
         return (
-            this.props.summoners.map((summoner: Summoner, i: number) => <p>Summoner Name: {summoner.name} Level: {summoner.summonerLevel}</p>)
+            this.props.summoners.map((summoner: Summoner, i: number) => <p key={i}>Summoner Name: {summoner.name} Level: {summoner.summonerLevel}</p>)
         );
     }
 }
