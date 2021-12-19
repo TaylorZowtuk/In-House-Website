@@ -5,8 +5,8 @@ import SummonerInfo from './SummonerInfo';
 import SummonerNameForm from "./SummonerNameForm";
 
 import { BASE_URL, NA_1 } from '../CONSTANTS';
-import { SummonerDTO } from '../interfaces/SummonerDTO';
-import { LeagueEntryDTO } from '../interfaces/LeagueEntryDTO';
+import { SummonerDTO } from '../../../backend/src/types/riot/SummonerDTO';
+import { LeagueEntryDTO } from '../../../backend/src/types/riot/LeagueEntryDTO';
 
 export type Summoner = {
     name: string;
@@ -51,7 +51,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     addSummonerName = (name: string) => {
         const key: string | undefined = process.env.REACT_APP_RIOT_API_KEY
         axios
-            .get<SummonerDTO>('https://' + NA_1 + BASE_URL + `/lol/summoner/v4/summoners/by-name/${name}?api_key=${key}`)
+            .get<SummonerDTO>(`/summoner/${name}`)
             .then((res) => {
                 console.log("Get summoner:", res);
 
