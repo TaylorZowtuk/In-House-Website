@@ -4,7 +4,6 @@ import axios from "axios";
 import SummonerInfo from './SummonerInfo';
 import SummonerNameForm from "./SummonerNameForm";
 
-import { BASE_URL, NA_1 } from '../CONSTANTS';
 import { SummonerDTO } from '../../../backend/src/types/riot/SummonerDTO';
 import { LeagueEntryDTO } from '../../../backend/src/types/riot/LeagueEntryDTO';
 
@@ -49,19 +48,18 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     addSummonerName = (name: string) => {
-        const key: string | undefined = process.env.REACT_APP_RIOT_API_KEY
         axios
             .get<SummonerDTO>(`/summoner/${name}`)
             .then((res) => {
                 console.log("Get summoner:", res);
 
-                const id: string = res.data.id;
+                const encryptedSummonerId: string = res.data.id;
                 const name: string = res.data.name;
 
                 axios
-                    .get<LeagueEntryDTO[]>('https://' + NA_1 + BASE_URL + `/lol/league/v4/entries/by-summoner/${id}?api_key=${key}`)
+                    .get<LeagueEntryDTO[]>(`/entries/${encryptedSummonerId}`)
                     .then((res) => {
-                        console.log("Get entry:", res);
+                        console.log("Get entries:", res);
 
                         const summoner: Summoner = this.summonerFromEntries(res.data, name);
 

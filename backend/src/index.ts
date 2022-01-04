@@ -4,6 +4,7 @@ import { config } from "dotenv"
 
 import { BASE_URL, NA_1 } from './CONSTANTS';
 import { SummonerDTO } from './types/riot/SummonerDTO';
+import { LeagueEntryDTO } from "./types/riot/LeagueEntryDTO";
 
 config()
 
@@ -24,6 +25,19 @@ app.get('/summoner/:name', (req: Request, res: Response) => {
         });
 })
 
+app.get('/entries/:encryptedSummonerId', (req: Request, res: Response) => {
+    const encryptedSummonerId: string = req.params.encryptedSummonerId;
+    axios
+        .get<LeagueEntryDTO[]>('https://' + NA_1 + BASE_URL + `/lol/league/v4/entries/by-summoner/${encryptedSummonerId}?api_key=${key}`)
+        .then((riotRes) => {
+            console.log("Get entries:", res);
+
+            res.send(riotRes.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+})
+
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`App listening at http://localhost:${port}`)
 })
