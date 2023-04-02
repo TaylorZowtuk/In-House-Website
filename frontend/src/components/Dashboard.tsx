@@ -3,6 +3,7 @@ import axios from "axios";
 
 import SummonerInfo from './SummonerInfo';
 import SummonerNameForm from "./SummonerNameForm";
+import CoinFlip from './CoinFlipper';
 
 import { SummonerDTO } from '../../../backend/src/types/riot/SummonerDTO';
 import { LeagueEntryDTO } from '../../../backend/src/types/riot/LeagueEntryDTO';
@@ -79,6 +80,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             <div>
                 <SummonerNameForm sendSummonerName={this.addSummonerName} />
                 <SummonerInfo summoners={this.state.summoners} />
+                <CoinFlip coinSides={["Eagle", "Heads"]} />
             </div>
         );
     }
