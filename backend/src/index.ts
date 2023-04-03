@@ -6,7 +6,6 @@ import { BASE_URL, NA_1 } from "./CONSTANTS";
 import { SummonerDTO } from "./types/riot/SummonerDTO";
 import { LeagueEntryDTO } from "./types/riot/LeagueEntryDTO";
 import sequelize from "../sequelize";
-import seed from "../sequelize/seed";
 
 config();
 
