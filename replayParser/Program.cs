@@ -18,7 +18,26 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/parseFile", async (IFormFile file) => {
+app.MapPost("/parseReplay", async (IFormFile file) => {
+    return Results.Ok(await ParseReplay(file));
+});
+
+app.MapPost("/parseReplays", async (IFormFileCollection files) => {
+
+    throw new NotImplementedException("Method under construction 🐱‍🐉");
+
+    List<Fraxiinus.Rofl.Extract.Data.Models.ROFL> results = new();
+
+    foreach(var file in files)
+    {
+        var result = await ParseReplay(file);
+        results.Add(result);
+    }
+
+    return Results.Ok(results);
+});
+
+async Task<Fraxiinus.Rofl.Extract.Data.Models.ROFL> ParseReplay(IFormFile file) {
 
     Fraxiinus.Rofl.Extract.Data.Models.ROFL replay;
 
@@ -30,7 +49,7 @@ app.MapPost("/parseFile", async (IFormFile file) => {
 
     replay = await RoflReader.LoadAsync(filePath, loadAll: false);
 
-    return Results.Ok(replay);
-});
+    return replay;
+}
 
 app.Run();
