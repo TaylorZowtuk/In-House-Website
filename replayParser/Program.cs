@@ -1,3 +1,4 @@
+using Fraxiinus.Rofl.Extract.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,21 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+app.MapPost("/parseFile", async (IFormFile file) => {
+
+    Fraxiinus.Rofl.Extract.Data.Models.ROFL replay;
+
+    var filePath = Path.GetTempFileName();
+    using (var stream = new FileStream(filePath, FileMode.Create))
+    {
+        await file.CopyToAsync(stream);
+    }
+
+    replay = await RoflReader.LoadAsync(filePath, loadAll: false);
+
+    return Results.Ok(replay);
+});
 
 app.Run();
 
