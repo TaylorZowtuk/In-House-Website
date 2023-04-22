@@ -83,7 +83,7 @@ app.post("/player/:stats", (req: Request, res: Response) => {
   sequelize.models.playerStat
     .create(stat)
     .then((newPlayerStat) => {
-      res.status(201).send(newPlayerStat);
+      res.status(201).send(JSON.stringify(newPlayerStat));
     })
     .catch((err) => {
       res.status(500).send(err);
