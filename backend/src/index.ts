@@ -25,10 +25,10 @@ app.get("/summoner/:name", (req: Request, res: Response) => {
     .then((riotRes) => {
       console.log("Get summoner:", res);
 
-      res.send(riotRes.data);
+      res.status(201).send(riotRes.data);
     })
     .catch((err) => {
-      console.log(err);
+      res.status(500).send(err);
     });
 });
 
@@ -44,10 +44,62 @@ app.get("/entries/:encryptedSummonerId", (req: Request, res: Response) => {
     .then((riotRes) => {
       console.log("Get entries:", res);
 
-      res.send(riotRes.data);
+      res.status(201).send(riotRes.data);
     })
     .catch((err) => {
-      console.log(err);
+      res.status(500).send(err);
+    });
+});
+
+app.post("/:match", (req: Request, res: Response) => {
+  res.status(501).send("Not implemented");
+
+  // const match: any = req.params.match;
+  // console.log("Creating match from:", match);
+
+  // sequelize.models.match
+  //   .create(
+  //     {
+  //       matchId: match.matchId,
+  //       gameDuration: match.gameDuration,
+  //       gameVersion: match.gameVersion,
+  //       gameDatetime: match.gameCreation,
+  //       playerStats: match.participants,
+  //     },
+  //     { include: [sequelize.models.playerStat] }
+  //   )
+  //   .then((newMatch) => {
+  //     res.status(201).send(newMatch);
+  //   })
+  //   .catch((err) => {
+  //     res.status(500).send(err);
+  //   });
+});
+
+app.post("/player/:stats", (req: Request, res: Response) => {
+  const stat: any = req.params.stat;
+  console.log("Creating playerStat from:", stat);
+
+  sequelize.models.playerStat
+    .create(stat)
+    .then((newPlayerStat) => {
+      res.status(201).send(JSON.stringify(newPlayerStat));
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
+
+app.get("/player/:stats", (req: Request, res: Response) => {
+  console.log("Returning all playerStats");
+
+  sequelize.models.playerStat
+    .findAll({ raw: true })
+    .then((stats) => {
+      res.status(200).json(stats);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
     });
 });
 
