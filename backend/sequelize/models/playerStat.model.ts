@@ -15,7 +15,7 @@ function playerStat(sequelize: Sequelize): any {
     },
     baronKills: {
       allowNull: false,
-      type: DataTypes.FLOAT,
+      type: DataTypes.STRING,
     },
     barracksKilled: {
       allowNull: false,

@@ -18,36 +18,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/parseReplay", async (IFormFile file) => {
-    return Results.Ok(await ParseReplay(file));
+// TODO: generalize to take a file instead of a filepath which forces the 
+// endpoint to run on the same server as the frontend
+app.MapPost("/parseReplay", async (string filepath) => {
+    return Results.Ok(await ParseReplay(filepath));
 });
 
 app.MapPost("/parseReplays", async (IFormFileCollection files) => {
-
     throw new NotImplementedException("Method under construction 🐱‍🐉");
-
-    List<Fraxiinus.Rofl.Extract.Data.Models.ROFL> results = new();
-
-    foreach(var file in files)
-    {
-        var result = await ParseReplay(file);
-        results.Add(result);
-    }
-
-    return Results.Ok(results);
 });
 
-async Task<Fraxiinus.Rofl.Extract.Data.Models.ROFL> ParseReplay(IFormFile file) {
-
+async Task<Fraxiinus.Rofl.Extract.Data.Models.ROFL> ParseReplay(string filepath) {
     Fraxiinus.Rofl.Extract.Data.Models.ROFL replay;
-
-    var filePath = Path.GetTempFileName();
-    using (var stream = new FileStream(filePath, FileMode.Create))
-    {
-        await file.CopyToAsync(stream);
-    }
-
-    replay = await RoflReader.LoadAsync(filePath, loadAll: false);
+    replay = await RoflReader.LoadAsync(filepath, loadAll: false);
 
     return replay;
 }

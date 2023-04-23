@@ -1,6 +1,23 @@
+import * as fs from "fs";
+import * as path from "path";
+
+import axios, { AxiosResponse } from "axios";
+
 import sequelize from "./index";
+import { ReplayDTO } from "../src/types/ReplayDTO";
+import { ParticipantDTO } from "../src/types/ParticipantDTO";
+import { PlayerStatDTO } from "../src/types/PlayerStatDTO";
+import { participantToPlayer } from "../../frontend/src/interfaces/mappings";
+import { REPLAY_BASE_URL } from "../src/CONSTANTS";
 
 async function seed() {
+  const args: string[] = process.argv.slice(2);
+  if (args.length !== 1) {
+    console.log("Expected 1 argument: seed.ts path_to_replays_dir");
+    return;
+  }
+  const path_to_replays_dir: string = args[0];
+
   console.log(
     "Will rewrite the SQLite example database, adding some dummy data."
   );
@@ -27,10 +44,53 @@ async function seed() {
   //     "rJTC2oeUZmYJ_vfiTYFcsif4NlTUy_RcslSlamIhgMlJKSQN8RQXBCFdkpTr9OOOxjO678v4ItT3tw",
   // });
 
+  await seedReplays(path_to_replays_dir);
+
   console.log("Seeding done!");
-  sequelize.models.account.findAll().then((accounts) => {
-    console.log("Accounts:", accounts);
+  sequelize.models.user.findAll().then((users) => {
+    console.log("Users:", users);
+  });
+  // sequelize.models.account.findAll().then((accounts) => {
+  //   console.log("Accounts:", accounts);
+  // });
+  sequelize.models.playerStat.findAll().then((stats) => {
+    console.log("First stat:", stats[0]);
   });
 }
 
+async function seedReplays(path_to_replays_dir: string): Promise<void> {
+  console.log("Seeding with replays from:", path_to_replays_dir);
+
+  // Get all filepaths from path_to_replays_dir
+  const filepaths: string[] = [];
+  fs.readdirSync(path_to_replays_dir).forEach((file) => {
+    const filepath = path.join(path_to_replays_dir, file);
+    filepaths.push(filepath);
+  });
+
+  // Make a request to replayParser with each filepath
+  for (const filepath of filepaths) {
+    let res: AxiosResponse<any, any>;
+    // TODO: figure out how to set the default base_url on a per-file basis
+    // TODO: why can I not pass a data object to axios.post; why does it need to be a query param?
+    res = await axios.post<any>(
+      REPLAY_BASE_URL + `/parseReplay?filepath=${filepath}`
+    );
+    console.log("res:", res.data);
+
+    // Create a playerStat for each player in the match
+    const participants: ParticipantDTO[] = res.data.metadata.playerStatistics;
+    const playerStats: PlayerStatDTO[] = [];
+    participants.forEach((participant) => {
+      const playerStat: PlayerStatDTO = participantToPlayer(participant);
+      playerStats.push(playerStat);
+    });
+
+    for (const playerStat of playerStats) {
+      await sequelize.models.playerStat.create(playerStat);
+    }
+  }
+}
+
+// Run using: `npm run seed -- <path_to_replays_dir>`
 seed();

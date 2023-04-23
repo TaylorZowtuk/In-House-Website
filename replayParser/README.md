@@ -2,7 +2,6 @@
 
 C# endpoint that parses a league replay file and returns JSON metadata response
 
-
 # Prereqs
 
 1. Dotnet SDK - https://dotnet.microsoft.com/en-us/download/dotnet/8.0
@@ -14,6 +13,10 @@ C# endpoint that parses a league replay file and returns JSON metadata response
 # Steps to Build
 
 1. `dotnet build`
+
+# Swagger
+
+- http://\<host\>:\<port\>/swagger/index.html
 
 # Help
 
