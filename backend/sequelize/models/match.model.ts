@@ -1,5 +1,7 @@
 import { DataTypes, Sequelize } from "sequelize";
 
+// TODO: Adjust match model and the ReplayDTO interface to match what
+// is actually returned from the parseReplay API
 function match(sequelize: Sequelize): any {
   sequelize.define("match", {
     matchId: {
