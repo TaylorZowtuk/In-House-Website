@@ -77,6 +77,9 @@ app.post("/:match", (req: Request, res: Response) => {
 });
 
 app.post("/player/:stats", (req: Request, res: Response) => {
+  res.status(501).send("Not implemented");
+
+  // Untested
   const stat: any = req.params.stat;
   console.log("Creating playerStat from:", stat);
 
@@ -97,6 +100,27 @@ app.get("/player/:stats", (req: Request, res: Response) => {
     .findAll({ raw: true })
     .then((stats) => {
       res.status(200).json(stats);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
+
+app.get("/player/:aggregatedStats", (req: Request, res: Response) => {
+  console.log("Returning all aggregatedPlayerStats");
+
+  // TODO: Add more fields
+  sequelize.models.playerStat
+    .findAll({
+      attributes: [
+        "name",
+        [sequelize.fn("sum", sequelize.col("assists")), "assists"],
+      ],
+      group: "name",
+      raw: true,
+    })
+    .then((aggregatedStats) => {
+      res.status(200).json(aggregatedStats);
     })
     .catch((err) => {
       res.status(500).send(err);

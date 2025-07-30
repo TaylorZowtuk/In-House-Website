@@ -4,11 +4,11 @@ import * as path from "path";
 import axios, { AxiosResponse } from "axios";
 
 import sequelize from "./index";
-import { ReplayDTO } from "../src/types/ReplayDTO";
 import { ParticipantDTO } from "../src/types/ParticipantDTO";
 import { PlayerStatDTO } from "../src/types/PlayerStatDTO";
 import { participantToPlayer } from "../../frontend/src/interfaces/mappings";
 import { REPLAY_BASE_URL } from "../src/CONSTANTS";
+import { aggregateStatsQuery } from "./aggregates";
 
 async function seed() {
   const args: string[] = process.argv.slice(2);
@@ -47,15 +47,23 @@ async function seed() {
   await seedReplays(path_to_replays_dir);
 
   console.log("Seeding done!");
-  sequelize.models.user.findAll().then((users) => {
-    console.log("Users:", users);
-  });
+  const users = await sequelize.models.user.findAll({ raw: true });
+  console.log("Users:", users);
+
   // sequelize.models.account.findAll().then((accounts) => {
   //   console.log("Accounts:", accounts);
   // });
-  sequelize.models.playerStat.findAll().then((stats) => {
-    console.log("First stat:", stats[0]);
-  });
+
+  const stats = await sequelize.models.playerStat.findAll({ raw: true });
+  console.log("Stats:", stats);
+
+  const wins = await aggregateStatsQuery(true);
+  console.log("Aggregate wins:", wins);
+
+  const losses = await aggregateStatsQuery(false);
+  console.log("Aggregate losses:", losses);
+
+  // TODO: join the wins and losses together in order to return AggregatedPlayerStatDTO
 }
 
 async function seedReplays(path_to_replays_dir: string): Promise<void> {
